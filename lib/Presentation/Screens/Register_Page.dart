@@ -1,12 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:musical_match/Presentation/Screens/HomePage.dart';
+import 'package:musical_match/main.dart';
 import 'Login_Screen.dart';
 
 class RegisterPage extends StatefulWidget {
+  static const String idScreen = "register";
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  TextEditingController NameController = TextEditingController();
+  TextEditingController EmailController = TextEditingController();
+  TextEditingController PasswordController = TextEditingController();
+  TextEditingController PhoneController = TextEditingController();
+
   bool icon = true;
   @override
   Widget build(BuildContext context) {
@@ -43,12 +57,14 @@ class _RegisterPageState extends State<RegisterPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             TextFormField(
+                              controller: NameController,
                               decoration: InputDecoration(
                                 labelText: "Name",
                               ),
                               keyboardType: TextInputType.text,
                             ),
                             TextFormField(
+                              controller: EmailController,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               decoration: InputDecoration(
@@ -57,6 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               keyboardType: TextInputType.emailAddress,
                             ),
                             TextFormField(
+                              controller: PasswordController,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               decoration: InputDecoration(
@@ -77,10 +94,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               obscureText: icon ? true : false,
                             ),
                             TextFormField(
+                              controller: PhoneController,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               decoration: InputDecoration(
-                                labelText: "Phone no.",
+                                labelText: "Phone no. (Optional)",
                               ),
                               keyboardType: TextInputType.phone,
                             ),
@@ -94,7 +112,23 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: Text(
                                   "CREATE ACCOUNT",
                                 ),
-                                onPressed: () {}),
+                                onPressed: () {
+                                  if(NameController.text.length<4)
+                                  {
+                                    displayErrorMessage("Name must be atleast 4 characters.", context);
+                                  }
+                                  else if(!EmailController.text.contains("@"))
+                                  {
+                                      displayErrorMessage("Email Id is not valid.", context);
+                                  }
+                                  else if(PasswordController.text.length < 6)
+                                    {
+                                      displayErrorMessage("Password must be atleast 6 characters", context);
+                                    }
+                                  else {
+                                    registerUser(context);
+                                  }
+                                }),
                             SizedBox(
                               height: 22.0,
                             ),
@@ -106,13 +140,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   fontWeight: FontWeight.bold),
                             ),
                             InkWell(
-                              onTap: () {
-                                setState(() {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return loginPage();
-                                  }));
-                                });
+                              onTap: (){
+                                Navigator.pushNamedAndRemoveUntil(context, loginPage.idScreen, (route) => false);
                               },
                               child: Text(
                                 "Login",
@@ -135,4 +164,36 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
+
+  void registerUser(BuildContext context) async {
+    final User firebaseUser =
+        (await _firebaseAuth.createUserWithEmailAndPassword(
+                email: EmailController.text, password: PasswordController.text
+        ).catchError((errorMsg){
+          displayErrorMessage("Error: "+errorMsg.toString(), context);
+        })).user;
+
+    if(firebaseUser != null)
+    {
+
+      Map userData ={
+        "name": NameController.text.trim(),
+        "email": EmailController.text.trim(),
+        "phone": PhoneController.text.trim()
+      };
+
+      userRef.child(firebaseUser.uid).set(userData);
+      displayErrorMessage("Congratulation, Your Account has been created.", context);
+
+      Navigator.pushNamedAndRemoveUntil(context, HomePage.idScreen, (route) => false);
+    }
+    else{
+      displayErrorMessage(("User Account has not been Created"),context);
+    }
+  }
+}
+
+displayErrorMessage(String message , BuildContext context)
+{
+  Fluttertoast.showToast(msg: message);
 }

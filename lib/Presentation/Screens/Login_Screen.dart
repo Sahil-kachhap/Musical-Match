@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'Forgot_Password.dart';
 import 'HomePage.dart';
 import 'Register_Page.dart';
 
 class loginPage extends StatefulWidget {
+  static const String idScreen = "login";
+
   @override
   _loginPageState createState() => _loginPageState();
 }
@@ -80,14 +83,8 @@ class _loginPageState extends State<loginPage> {
                                   child: Text(
                                     "LOGIN",
                                   ),
-                                  onPressed: () {
-                                    setState(() {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
-                                            return HomePage();
-                                          }));
-                                    });
-                                  }),
+                                  onPressed: () {}
+                                  ),
                               SizedBox(
                                 height: 13.0,
                               ),
@@ -120,10 +117,7 @@ class _loginPageState extends State<loginPage> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                        return RegisterPage();
-                                      }));
+                                  Navigator.pushNamedAndRemoveUntil(context, RegisterPage.idScreen, (route) => false);
                                 },
                                 child: Text(
                                   "Create Account",

@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
+  static const String idScreen = "home";
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -44,7 +47,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "No Feeds Created Yet",
+                " No Feeds Created Yet",
                 style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold,fontFamily: 'OpenSans'),
               ),
               Padding(
