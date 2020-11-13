@@ -9,6 +9,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final FirebaseAuth firebaseAuth= FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +35,9 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {},
               ),
               ListTile(
-                title: Text("Log Out"),
+                title: InkWell(child: Text("Log Out"),onTap: (){
+                  firebaseAuth.signOut();
+                },),
               )
             ],
           )),

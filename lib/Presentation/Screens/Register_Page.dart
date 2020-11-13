@@ -179,7 +179,7 @@ class _RegisterPageState extends State<RegisterPage> {
       Map userData ={
         "name": NameController.text.trim(),
         "email": EmailController.text.trim(),
-        "phone": PhoneController.text.trim()
+        "phone": PhoneController.text.trim(),
       };
 
       userRef.child(firebaseUser.uid).set(userData);

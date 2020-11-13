@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../main.dart';
 import 'Forgot_Password.dart';
 import 'HomePage.dart';
 import 'Register_Page.dart';
@@ -12,6 +15,12 @@ class loginPage extends StatefulWidget {
 }
 
 class _loginPageState extends State<loginPage> {
+
+  TextEditingController EmailController = TextEditingController();
+  TextEditingController PasswordController = TextEditingController();
+
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
   bool icon = true;
   @override
   Widget build(BuildContext context) {
@@ -49,16 +58,20 @@ class _loginPageState extends State<loginPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               TextFormField(
+                                controller: EmailController,
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
                                 decoration: InputDecoration(
                                   labelText: "Email ID",
+                                  labelStyle: GoogleFonts.montserrat(fontSize: 20.0)
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                               ),
                               TextFormField(
+                                controller: PasswordController,
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
                                 decoration: InputDecoration(
                                     labelText: "Password",
+                                    labelStyle: GoogleFonts.montserrat(fontSize: 20.0),
                                     suffixIcon: IconButton(
                                         icon: icon
                                             ? Icon(Icons.visibility_off)
@@ -81,9 +94,21 @@ class _loginPageState extends State<loginPage> {
                                   textColor: Colors.white,
                                   splashColor: Colors.redAccent,
                                   child: Text(
-                                    "LOGIN",
+                                    "LOGIN",style: GoogleFonts.montserrat(fontSize: 16.0),
                                   ),
-                                  onPressed: () {}
+                                  onPressed: () {
+                                    if(!EmailController.text.contains("@"))
+                                    {
+                                      displayErrorMessage("Email Id is not valid.", context);
+                                    }
+                                    else if(PasswordController.text.isEmpty)
+                                    {
+                                      displayErrorMessage("Password is mandatory.", context);
+                                    }
+                                    else {
+                                      loginUser(context);
+                                    }
+                                  }
                                   ),
                               SizedBox(
                                 height: 13.0,
@@ -99,10 +124,7 @@ class _loginPageState extends State<loginPage> {
                                 },
                                 child: Text(
                                   "Forgot Your Password?",
-                                  style: TextStyle(
-                                      color: Colors.teal,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.0),
+                                  style: GoogleFonts.montserrat(fontSize: 18.0,color: Colors.teal,fontWeight: FontWeight.bold),
                                 ),
                               ),
                               SizedBox(
@@ -110,10 +132,7 @@ class _loginPageState extends State<loginPage> {
                               ),
                               Text(
                                 "Don't have an account?",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold),
+                                style:GoogleFonts.montserrat(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 18.0)
                               ),
                               InkWell(
                                 onTap: () {
@@ -121,10 +140,7 @@ class _loginPageState extends State<loginPage> {
                                 },
                                 child: Text(
                                   "Create Account",
-                                  style: TextStyle(
-                                      color: Colors.teal,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.0),
+                                  style: GoogleFonts.montserrat(fontSize: 18.0,fontWeight: FontWeight.bold,color: Colors.teal),
                                 ),
                               )
                             ],
@@ -140,5 +156,33 @@ class _loginPageState extends State<loginPage> {
         ],
       ),
     );
+  }
+  void loginUser(BuildContext context) async{
+    final User firebaseUser =
+        (await firebaseAuth.signInWithEmailAndPassword(
+            email: EmailController.text, password: PasswordController.text
+        ).catchError((errorMsg){
+          displayErrorMessage("Error: "+errorMsg.toString(), context);
+        })).user;
+
+    if(firebaseUser != null)
+    {
+
+      userRef.child(firebaseUser.uid).once().then((DataSnapshot snap){
+        if(snap.value!=null)
+          {
+            Navigator.pushNamedAndRemoveUntil(context, HomePage.idScreen, (route) => false);
+            displayErrorMessage("You are Logged-in now.", context);
+          }
+        else{
+          firebaseAuth.signOut();
+          displayErrorMessage("No record exist for this user.Please create new account.", context);
+        }
+      });
+
+    }
+    else{
+      displayErrorMessage("Error occured. Cannot Sign in.",context);
+    }
   }
 }
