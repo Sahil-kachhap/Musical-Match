@@ -15,7 +15,6 @@ class loginPage extends StatefulWidget {
 }
 
 class _loginPageState extends State<loginPage> {
-
   TextEditingController EmailController = TextEditingController();
   TextEditingController PasswordController = TextEditingController();
 
@@ -47,8 +46,8 @@ class _loginPageState extends State<loginPage> {
                           primarySwatch: Colors.teal,
                           inputDecorationTheme: InputDecorationTheme(
                             labelStyle: TextStyle(
-                                fontSize: 20.0,
-                                color: Colors.teal,
+                              fontSize: 20.0,
+                              color: Colors.teal,
                             ),
                           ),
                         ),
@@ -59,19 +58,22 @@ class _loginPageState extends State<loginPage> {
                             children: <Widget>[
                               TextFormField(
                                 controller: EmailController,
-                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
                                 decoration: InputDecoration(
-                                  labelText: "Email ID",
-                                  labelStyle: GoogleFonts.montserrat(fontSize: 20.0)
-                                ),
+                                    labelText: "Email ID",
+                                    labelStyle:
+                                        GoogleFonts.montserrat(fontSize: 20.0)),
                                 keyboardType: TextInputType.emailAddress,
                               ),
                               TextFormField(
                                 controller: PasswordController,
-                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
                                 decoration: InputDecoration(
                                     labelText: "Password",
-                                    labelStyle: GoogleFonts.montserrat(fontSize: 20.0),
+                                    labelStyle:
+                                        GoogleFonts.montserrat(fontSize: 20.0),
                                     suffixIcon: IconButton(
                                         icon: icon
                                             ? Icon(Icons.visibility_off)
@@ -94,22 +96,22 @@ class _loginPageState extends State<loginPage> {
                                   textColor: Colors.white,
                                   splashColor: Colors.redAccent,
                                   child: Text(
-                                    "LOGIN",style: GoogleFonts.montserrat(fontSize: 16.0),
+                                    "LOGIN",
+                                    style:
+                                        GoogleFonts.montserrat(fontSize: 16.0),
                                   ),
                                   onPressed: () {
-                                    if(!EmailController.text.contains("@"))
-                                    {
-                                      displayErrorMessage("Email Id is not valid.", context);
-                                    }
-                                    else if(PasswordController.text.isEmpty)
-                                    {
-                                      displayErrorMessage("Password is mandatory.", context);
-                                    }
-                                    else {
+                                    if (!EmailController.text.contains("@")) {
+                                      displayErrorMessage(
+                                          "Email Id is not valid.", context);
+                                    } else if (PasswordController
+                                        .text.isEmpty) {
+                                      displayErrorMessage(
+                                          "Password is mandatory.", context);
+                                    } else {
                                       loginUser(context);
                                     }
-                                  }
-                                  ),
+                                  }),
                               SizedBox(
                                 height: 13.0,
                               ),
@@ -118,29 +120,37 @@ class _loginPageState extends State<loginPage> {
                                   setState(() {
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
-                                          return ForgotPassword();
-                                        }));
+                                      return ForgotPassword();
+                                    }));
                                   });
                                 },
                                 child: Text(
                                   "Forgot Your Password?",
-                                  style: GoogleFonts.montserrat(fontSize: 18.0,color: Colors.teal,fontWeight: FontWeight.bold),
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 18.0,
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               SizedBox(
                                 height: 100.0,
                               ),
-                              Text(
-                                "Don't have an account?",
-                                style:GoogleFonts.montserrat(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 18.0)
-                              ),
+                              Text("Don't have an account?",
+                                  style: GoogleFonts.montserrat(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 18.0)),
                               InkWell(
                                 onTap: () {
-                                  Navigator.pushNamedAndRemoveUntil(context, RegisterPage.idScreen, (route) => false);
+                                  Navigator.pushNamedAndRemoveUntil(context,
+                                      RegisterPage.idScreen, (route) => false);
                                 },
                                 child: Text(
                                   "Create Account",
-                                  style: GoogleFonts.montserrat(fontSize: 18.0,fontWeight: FontWeight.bold,color: Colors.teal),
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.teal),
                                 ),
                               )
                             ],
@@ -157,32 +167,31 @@ class _loginPageState extends State<loginPage> {
       ),
     );
   }
-  void loginUser(BuildContext context) async{
-    final User firebaseUser =
-        (await firebaseAuth.signInWithEmailAndPassword(
-            email: EmailController.text, password: PasswordController.text
-        ).catchError((errorMsg){
-          displayErrorMessage("Error: "+errorMsg.toString(), context);
-        })).user;
 
-    if(firebaseUser != null)
-    {
+  void loginUser(BuildContext context) async {
+    final User firebaseUser = (await firebaseAuth
+            .signInWithEmailAndPassword(
+                email: EmailController.text, password: PasswordController.text)
+            .catchError((errorMsg) {
+      displayErrorMessage("Error: " + errorMsg.toString(), context);
+    }))
+        .user;
 
-      userRef.child(firebaseUser.uid).once().then((DataSnapshot snap){
-        if(snap.value!=null)
-          {
-            Navigator.pushNamedAndRemoveUntil(context, HomePage.idScreen, (route) => false);
-            displayErrorMessage("You are Logged-in now.", context);
-          }
-        else{
+    if (firebaseUser != null) {
+      userRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
+        if (snap.value != null) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, HomePage.idScreen, (route) => false);
+          displayErrorMessage("You are Logged-in now.", context);
+        } else {
           firebaseAuth.signOut();
-          displayErrorMessage("No record exist for this user.Please create new account.", context);
+          displayErrorMessage(
+              "No record exist for this user.Please create new account.",
+              context);
         }
       });
-
-    }
-    else{
-      displayErrorMessage("Error occured. Cannot Sign in.",context);
+    } else {
+      displayErrorMessage("Error occured. Cannot Sign in.", context);
     }
   }
 }
