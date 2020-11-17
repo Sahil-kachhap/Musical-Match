@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:musical_match/Presentation/Screens/Profile_Page.dart';
 import '../../main.dart';
 import 'Forgot_Password.dart';
 import 'HomePage.dart';
@@ -181,7 +182,7 @@ class _loginPageState extends State<loginPage> {
       userRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
         if (snap.value != null) {
           Navigator.pushNamedAndRemoveUntil(
-              context, HomePage.idScreen, (route) => false);
+              context, ProfilePage.idScreen, (route) => false);
           displayErrorMessage("You are Logged-in now.", context);
         } else {
           firebaseAuth.signOut();

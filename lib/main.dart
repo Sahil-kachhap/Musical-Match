@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:musical_match/Presentation/Screens/HomePage.dart';
+import 'package:musical_match/Presentation/Screens/Profile_Page.dart';
 import 'package:musical_match/Presentation/Screens/Register_Page.dart';
 import 'Presentation/Screens/Login_Screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,6 +25,7 @@ class MusicalApp extends StatelessWidget {
           RegisterPage.idScreen: (context)=>RegisterPage(),
           loginPage.idScreen: (context)=>loginPage(),
         HomePage.idScreen: (context)=> HomePage(),
+          ProfilePage.idScreen: (context)=>ProfilePage()
       },
 
     );

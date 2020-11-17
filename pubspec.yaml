@@ -31,9 +31,7 @@ dependencies:
   firebase_auth: ^0.18.2
   firebase_core: ^0.5.2
   firebase_database: ^4.3.0
-  geolocator: ^6.1.6
   fluttertoast: ^7.1.1
-  google_sign_in: ^4.5.5
   google_fonts: ^1.1.1
   equatable: ^1.2.5
   flutter_bloc: ^6.0.6
