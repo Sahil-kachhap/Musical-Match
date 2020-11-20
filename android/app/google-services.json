@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "622408132901",
+    "firebase_url": "https://musical-match-5b1e4.firebaseio.com",
+    "project_id": "musical-match-5b1e4",
+    "storage_bucket": "musical-match-5b1e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622408132901:android:99a86a123a79f8dcbf92cc",
+        "android_client_info": {
+          "package_name": "com.sahilkachhap.musical_match"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622408132901-lv2i011je8031264mknmepksk41iimgo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3bRM7QipTQIV1NPVdHXCzDJ6vjIpWdsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622408132901-lv2i011je8031264mknmepksk41iimgo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
