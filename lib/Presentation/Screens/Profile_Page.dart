@@ -5,9 +5,16 @@ class ProfilePage extends StatelessWidget {
 
   List tags = ['music', 'vocal', 'guitar', 'piano', 'flute'];
   List Categories = ['Featured', 'Favorites', 'Collabs', 'Live Event'];
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void _openEndDrawer() {
+    _scaffoldKey.currentState.openEndDrawer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Color(0xff09031D),
       appBar: AppBar(
         leading: IconButton(
@@ -25,11 +32,44 @@ class ProfilePage extends StatelessWidget {
                 Icons.more_vert,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: _openEndDrawer,
             ),
           ),
         ],
       ),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('More Options', style: TextStyle( fontSize:20 ,color: Colors.white,)),
+              decoration: BoxDecoration(
+                color: Color(0xff09031D),
+              ),
+            ),
+            ListTile(
+              title: Text('About Us'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Log Out'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+      // Disable opening the end drawer with a swipe gesture accidentaly
+      endDrawerEnableOpenDragGesture: false,
       body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
