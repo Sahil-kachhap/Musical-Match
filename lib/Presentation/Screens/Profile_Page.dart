@@ -1,19 +1,53 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:musical_match/Presentation/Screens/HomePage.dart';
+import 'package:musical_match/User_Repository.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   static const String idScreen = "profile";
 
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   List tags = ['music', 'vocal', 'guitar', 'piano', 'flute'];
+
   List Categories = ['Featured', 'Favorites', 'Collabs', 'Live Event'];
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User user;
 
   void _openEndDrawer() {
     _scaffoldKey.currentState.openEndDrawer();
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initUser();
+  }
+
+  initUser() async {
+    user = await _auth.currentUser;
+    setState(() {});
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.home),
+        onPressed: (){
+          Navigator.pushNamedAndRemoveUntil(context,
+              HomePage.idScreen, (route) => false);
+        },
+      ),
       key: _scaffoldKey,
       backgroundColor: Color(0xff09031D),
       appBar: AppBar(
@@ -29,7 +63,7 @@ class ProfilePage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
               icon: Icon(
-                Icons.more_vert,
+                Icons.menu,
                 color: Colors.white,
               ),
               onPressed: _openEndDrawer,
@@ -37,35 +71,38 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('More Options', style: TextStyle( fontSize:20 ,color: Colors.white,)),
-              decoration: BoxDecoration(
-                color: Color(0xff09031D),
+      endDrawer: Container(
+        width: MediaQuery.of(context).size.width * 0.48,
+        child: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('More Options',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    )),
+                decoration: BoxDecoration(
+                  color: Color(0xff09031D),
+                ),
               ),
-            ),
-            ListTile(
-              title: Text('About Us'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Settings'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Log Out'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
+              ListTile(
+                title: Text('About Us'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Settings'),
+                onTap: () {},
+              ),
+              ListTile(
+                title: Text('Log Out'),
+                onTap: () {},
+              ),
+            ],
+          ),
         ),
       ),
       // Disable opening the end drawer with a swipe gesture accidentaly
@@ -90,8 +127,8 @@ class ProfilePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Sahil Kachhap",
-                        style: TextStyle(
+                        "${user?.displayName}",
+                        style: GoogleFonts.openSans(
                             fontWeight: FontWeight.bold,
                             fontSize: 28,
                             color: Colors.white),
@@ -109,7 +146,7 @@ class ProfilePage extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Text(
-                                "Bokaro- Jharkhand",
+                                "${user?.phoneNumber}",//"Bokaro- Jharkhand",
                                 style: TextStyle(
                                     color: Colors.white,
                                     wordSpacing: 2,
