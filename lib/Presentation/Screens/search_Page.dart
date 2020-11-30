@@ -88,6 +88,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xff09031D),
         title: Text("Chats"),
       ),
       body: Container(

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musical_match/Presentation/Screens/HomePage.dart';
 import 'package:musical_match/User_Repository.dart';
+import 'package:musical_match/auth.dart';
+import 'package:musical_match/widgets/decider.dart';
+import 'package:musical_match/Presentation/Screens/About_us.dart';
 
 class ProfilePage extends StatefulWidget {
   static const String idScreen = "profile";
@@ -15,6 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   List tags = ['music', 'vocal', 'guitar', 'piano', 'flute'];
 
   List Categories = ['Featured', 'Favorites', 'Collabs', 'Live Event'];
+
+  AuthMethods authMethods = AuthMethods();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -42,6 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xff09031D),
         child: Icon(Icons.home),
         onPressed: (){
           Navigator.pushNamedAndRemoveUntil(context,
@@ -53,7 +59,11 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context)=> HomePage()
+            ));
+          },
         ),
         title: Text("Profile"),
         elevation: 0,
@@ -90,7 +100,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ListTile(
                 title: Text('About Us'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context)=> AboutUs()
+                  ));
                 },
               ),
               ListTile(
@@ -99,7 +111,11 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 title: Text('Log Out'),
-                onTap: () {},
+                onTap: () {
+                  authMethods.SignOut();
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Authenticate()));
+                },
               ),
             ],
           ),
