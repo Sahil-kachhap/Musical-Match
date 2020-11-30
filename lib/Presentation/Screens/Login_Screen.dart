@@ -1,25 +1,62 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:musical_match/Presentation/Screens/HomePage.dart';
 import 'package:musical_match/Presentation/Screens/Profile_Page.dart';
-import '../../main.dart';
+import 'package:musical_match/auth.dart';
+import 'package:musical_match/database.dart';
+import 'package:musical_match/widgets/saveLocally.dart';
 import 'Forgot_Password.dart';
-import 'HomePage.dart';
 import 'Register_Page.dart';
+import '../../main.dart';
 
 class loginPage extends StatefulWidget {
   static const String idScreen = "login";
+
+  final Function toggle;
+  loginPage(this.toggle);
 
   @override
   _loginPageState createState() => _loginPageState();
 }
 
 class _loginPageState extends State<loginPage> {
+  final formKey = GlobalKey<FormState>();
+  AuthMethods authMethods = AuthMethods();
   TextEditingController EmailController = TextEditingController();
   TextEditingController PasswordController = TextEditingController();
+  DatabaseMethods databaseMethods = DatabaseMethods();
 
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  bool isLoading = false;
+  QuerySnapshot UserInfoSnapshot ;
+
+  signIn(){
+    if(formKey.currentState.validate()){
+     // HelperFunctions.saveUserEmail(EmailController.text);
+
+      databaseMethods.getUserByEmail(EmailController.text).then((value){
+        UserInfoSnapshot = value;
+       // HelperFunctions.saveUserName(UserInfoSnapshot.docs[0].data()["name"]);
+      });
+
+      setState(() {
+        isLoading=true;
+      });
+
+
+
+      authMethods.SignInWithCredentials(EmailController.text, PasswordController.text).then((value){
+        if(value!=null){
+        //  HelperFunctions.saveUserLogInCredentials(true);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+        }
+      });
+
+
+    }
+  }
+  //final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   bool icon = true;
   @override
@@ -41,6 +78,7 @@ class _loginPageState extends State<loginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Form(
+                      key: formKey,
                       child: Theme(
                         data: ThemeData(
                           brightness: Brightness.dark,
@@ -61,6 +99,11 @@ class _loginPageState extends State<loginPage> {
                                 controller: EmailController,
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
+                                validator: (value){
+                                  return RegExp(
+                                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+                                  ).hasMatch(value)?null:"Please provide a valid Email Id.";
+                                },//validateEmail,
                                 decoration: InputDecoration(
                                     labelText: "Email ID",
                                     labelStyle:
@@ -71,6 +114,9 @@ class _loginPageState extends State<loginPage> {
                                 controller: PasswordController,
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
+                                validator: (value){
+                                  return value.length >= 6 ? null : "Password must be atleast 6 characters long.";
+                                },
                                 decoration: InputDecoration(
                                     labelText: "Password",
                                     labelStyle:
@@ -102,16 +148,13 @@ class _loginPageState extends State<loginPage> {
                                         GoogleFonts.montserrat(fontSize: 16.0),
                                   ),
                                   onPressed: () {
-                                    if (!EmailController.text.contains("@")) {
-                                      displayErrorMessage(
-                                          "Email Id is not valid.", context);
-                                    } else if (PasswordController
-                                        .text.isEmpty) {
+                                   /* if (PasswordController.text.isEmpty) {
                                       displayErrorMessage(
                                           "Password is mandatory.", context);
                                     } else {
                                       loginUser(context);
-                                    }
+                                    }*/
+                                   signIn();
                                   }),
                               SizedBox(
                                 height: 13.0,
@@ -143,8 +186,9 @@ class _loginPageState extends State<loginPage> {
                                       fontSize: 18.0)),
                               InkWell(
                                 onTap: () {
-                                  Navigator.pushNamedAndRemoveUntil(context,
-                                      RegisterPage.idScreen, (route) => false);
+                                 /* Navigator.pushNamedAndRemoveUntil(context,
+                                      RegisterPage.idScreen, (route) => false);*/
+                                 widget.toggle();
                                 },
                                 child: Text(
                                   "Create Account",
@@ -169,16 +213,16 @@ class _loginPageState extends State<loginPage> {
     );
   }
 
-  void loginUser(BuildContext context) async {
+  /*void loginUser(BuildContext context) async {
     final User firebaseUser = (await firebaseAuth
             .signInWithEmailAndPassword(
                 email: EmailController.text, password: PasswordController.text)
             .catchError((errorMsg) {
       displayErrorMessage("Error: " + errorMsg.toString(), context);
     }))
-        .user;
+        .user;*/
 
-    if (firebaseUser != null) {
+  /*  if (firebaseUser != null) {
       userRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
         if (snap.value != null) {
           Navigator.pushNamedAndRemoveUntil(
@@ -193,6 +237,16 @@ class _loginPageState extends State<loginPage> {
       });
     } else {
       displayErrorMessage("Error occured. Cannot Sign in.", context);
-    }
+    }*/
   }
-}
+
+ /* String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'Enter Valid Email';
+    else
+      return null;
+  }
+}*/

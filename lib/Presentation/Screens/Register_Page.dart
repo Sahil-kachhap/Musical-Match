@@ -1,12 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:musical_match/Presentation/Screens/HomePage.dart';
-import 'package:musical_match/main.dart';
-import 'Login_Screen.dart';
+import 'package:musical_match/database.dart';
+import 'package:musical_match/widgets/saveLocally.dart';
+import '../../auth.dart';
 
 class RegisterPage extends StatefulWidget {
   static const String idScreen = "register";
+
+  final Function toggle;
+  RegisterPage(this.toggle);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -14,18 +17,55 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
 
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+ // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final formKey = GlobalKey<FormState>();
+
+  AuthMethods authMethods =  AuthMethods();
+  DatabaseMethods databaseMethods = DatabaseMethods();
+
+  bool isLoading = false;
 
   TextEditingController NameController = TextEditingController();
   TextEditingController EmailController = TextEditingController();
   TextEditingController PasswordController = TextEditingController();
   TextEditingController PhoneController = TextEditingController();
 
+  doSignUp(){
+
+    Map<String,String> userinfoMap = {
+      "name": NameController.text,
+      "email": EmailController.text,
+      "phone": PhoneController.text
+    };
+
+  //  HelperFunctions.saveUserName(NameController.text);
+  //  HelperFunctions.saveUserEmail(EmailController.text);
+
+    if(formKey.currentState.validate()){
+      setState(() {
+        isLoading = true;
+      });
+    }
+
+    authMethods.SignUpWithCredential(EmailController.text, PasswordController.text).then((value){
+
+      databaseMethods.uploadUserInfo(userinfoMap);
+    //  HelperFunctions.saveUserLogInCredentials(true);
+       Navigator.pushReplacement(context, MaterialPageRoute(
+         builder: (context)=> HomePage()
+       ));
+    });
+  }
+
   bool icon = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: isLoading ?
+          Container(
+            child: Center(child: CircularProgressIndicator()),
+          )
+          : Stack(
         fit: StackFit.expand,
         children: <Widget>[
           Image(
@@ -40,6 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Form(
+                    key: formKey,
                     child: Theme(
                       data: ThemeData(
                         brightness: Brightness.dark,
@@ -57,6 +98,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             TextFormField(
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (value){
+                                return value.isEmpty ? "Please Provide Your UserName." : null;
+                              },
                               controller: NameController,
                               decoration: InputDecoration(
                                 labelText: "Name",
@@ -67,6 +112,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               controller: EmailController,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
+                              validator: (value){
+                                return RegExp(
+                                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+                                ).hasMatch(value)?null:"Please provide a valid Email Id.";
+                              },
                               decoration: InputDecoration(
                                 labelText: "Email Address",
                               ),
@@ -76,6 +126,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               controller: PasswordController,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
+                              validator: (value){
+                                return value.length >= 6 ? null : "Password must be atleast 6 characters long.";
+                              },
                               decoration: InputDecoration(
                                 labelText: "Create Password",
                                 suffixIcon: IconButton(
@@ -113,7 +166,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   "CREATE ACCOUNT",
                                 ),
                                 onPressed: () {
-                                  if(NameController.text.length<4)
+                                 /* if(NameController.text.length<4)
                                   {
                                     displayErrorMessage("Name must be atleast 4 characters.", context);
                                   }
@@ -126,8 +179,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                       displayErrorMessage("Password must be atleast 6 characters", context);
                                     }
                                   else {
-                                    registerUser(context);
-                                  }
+                                    //registerUser(context);
+                                  }*/
+                                 doSignUp();
                                 }),
                             SizedBox(
                               height: 22.0,
@@ -141,7 +195,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             InkWell(
                               onTap: (){
-                                Navigator.pushNamedAndRemoveUntil(context, loginPage.idScreen, (route) => false);
+                               widget.toggle();
+                                // Navigator.pushNamedAndRemoveUntil(context, loginPage.idScreen, (route) => false);
                               },
                               child: Text(
                                 "Login",
@@ -165,7 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void registerUser(BuildContext context) async {
+ /* void registerUser(BuildContext context) async {
     final User firebaseUser =
         (await _firebaseAuth.createUserWithEmailAndPassword(
                 email: EmailController.text, password: PasswordController.text
@@ -190,7 +245,7 @@ class _RegisterPageState extends State<RegisterPage> {
     else{
       displayErrorMessage(("User Account has not been Created"),context);
     }
-  }
+  }*/
 }
 
 displayErrorMessage(String message , BuildContext context)

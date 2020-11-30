@@ -73,11 +73,11 @@ class _ResetPasswordState extends State<ResetPassword> {
                                 textColor: Colors.white,
                                 child: Text("DONE",style: TextStyle(fontFamily: 'Montserrat'),),
                                 onPressed: (){
-                                  setState(() {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                                 /* setState(() {
+                                   Navigator.push(context, MaterialPageRoute(builder: (context){
                                       return loginPage();
                                     }));
-                                  });
+                                  });*/
                                 }),
                           ],
                         ),
