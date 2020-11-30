@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musical_match/Presentation/Screens/Profile_Page.dart';
 import 'package:musical_match/Presentation/Screens/search_Page.dart';
+import 'package:musical_match/Presentation/Screens/About_us.dart';
 import 'package:musical_match/auth.dart';
 import 'package:musical_match/widgets/constants.dart';
 import 'package:musical_match/widgets/decider.dart';
@@ -37,6 +38,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+          backgroundColor: Color(0xff09031D),
           child: Icon(Icons.account_circle),
           onPressed: () {
             Navigator.pushNamedAndRemoveUntil(
@@ -47,21 +49,30 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           UserAccountsDrawerHeader(
             currentAccountPicture: CircleAvatar(
-              backgroundImage: AssetImage("images/sahil2.jpg"),
+              backgroundImage: AssetImage("Images/sahil.jpg"),
             ),
             accountName: Text("Sahil Kachhap"),
             accountEmail: Text("Sahil.kachhap111989@gmail.com"),
             decoration: BoxDecoration(
+                color: Color(0xff09031D),
                 image: DecorationImage(
-                    image: AssetImage("images/drawer.jpeg"),
+                    image: AssetImage("Images/drawer.jpeg"),
                     fit: BoxFit.cover)),
           ),
           ListTile(
-            title: Text("Account Settings"),
+            title: Text("Account"),
             trailing: Icon(Icons.person),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(
-                builder: (context)=> SearchPage()
+                builder: (context)=> ProfilePage()
+              ));
+            },
+          ),
+          ListTile(
+            title: Text("About Us"),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context)=> AboutUs()
               ));
             },
           ),
@@ -78,6 +89,7 @@ class _HomePageState extends State<HomePage> {
         ],
       )),
       appBar: AppBar(
+        backgroundColor: Color(0xff09031D),
         title: Text(
           "Musical Match",
           style: TextStyle(fontWeight: FontWeight.bold),

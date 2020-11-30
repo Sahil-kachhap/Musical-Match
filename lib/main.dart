@@ -3,7 +3,7 @@ import 'package:musical_match/Presentation/Screens/HomePage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:musical_match/widgets/decider.dart';
 import 'package:musical_match/widgets/saveLocally.dart';
-
+import 'package:musical_match/Presentation/Screens/Profile_Page.dart';
 
 
 void main() async{
@@ -44,12 +44,12 @@ class _MusicalAppState extends State<MusicalApp> {
         debugShowCheckedModeBanner: false,
         title: 'Musical Match',
         home : Authenticate(),
-    /*  routes: {
+         routes: {
          // RegisterPage.idScreen: (context)=>RegisterPage(),
           //loginPage.idScreen: (context)=> loginPage(),
           HomePage.idScreen: (context)=> HomePage(),
           ProfilePage.idScreen: (context)=>ProfilePage()
-      },*/
+      },
     );
   }
 }
